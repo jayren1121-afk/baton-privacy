@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Privacy Policy — Baton (JAYTAI)</title>
+<style>
+  :root { color-scheme: light dark; }
+  body { font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; line-height: 1.55; max-width: 46rem; margin: 2rem auto; padding: 0 1.25rem; }
+  h1 { font-size: 1.75rem; }
+  h2 { margin-top: 1.75rem; font-size: 1.25rem; }
+  table { border-collapse: collapse; width: 100%; margin: 1rem 0; font-size: 0.95rem; }
+  th, td { border: 1px solid #8884; padding: 0.45rem 0.6rem; text-align: left; vertical-align: top; }
+  code { font-size: 0.9em; }
+  a { color: #0b57d0; }
+</style>
+</head>
+<body>
+<h1>Privacy Policy — Baton</h1>
+<p><strong>Team:</strong> JAYTAI   <strong>Product:</strong> Baton (Atlassian Forge app for Jira and Confluence)   <strong>Support / contact:</strong> <a href="mailto:jayren1121@gmail.com">jayren1121@gmail.com</a>   <strong>Last updated:</strong> 9 November 2026 (UTC+8)</p>
+<p>This policy describes how the Baton Forge app (“Baton”, “we”, “us”) handles data when it is installed on an Atlassian Cloud site. It is based on the behaviour of Baton version 5.1.1 as shipped in the app source. It is not legal advice.</p>
+<hr>
+<h2>1. Who this applies to</h2>
+<p>Baton is installed by a site or product administrator on an Atlassian Cloud site. End users who open Baton, enable capture, or use Remember this / Rovo actions are “users”. Site admins configure defaults and exclusions.</p>
+<hr>
+<h2>2. What Baton stores (Forge storage)</h2>
+<p>Baton stores app data in <strong>Atlassian Forge storage</strong> on Atlassian’s platform: the <strong>Custom Entity Store</strong> and <strong>key–value storage (KVS)</strong>. Data is scoped to the app installation on that site.</p>
+<h3>Custom entities (per installation)</h3>
+<ul>
+<li><strong><code>candidate</code></strong> — pending captured items awaiting user review (summary, type, optional due date/time/timezone, source URL/kind/id, status, needs-review flag, owner account id, week key, timestamps).</li>
+<li><strong><code>memory</code></strong> — confirmed <strong>Work Memory</strong> items for a user (same kinds of fields, plus state such as done/cancelled and optional linked Jira issue key).</li>
+<li><strong><code>share</code></strong> — entity declared in the manifest from an earlier design; <strong>current product code does not use successor sharing</strong>. Successors rely on Confluence handover pages the user creates.</li>
+</ul>
+<h3>Settings and indexes (KVS / settings records)</h3>
+<p>Per-user settings such as: privacy notice accepted, passive capture on/off, language (EN / 中文), calendar open preference, optional Slack member id, custom keywords, weekly-email schedule (weekday/time), optional manual recipient email, optional notify issue key, and weekly-send bookkeeping (ISO week keys). Admin defaults may include default Jira project, Confluence space, and exclusion lists (Jira projects, Confluence spaces, Slack channels, keywords).</p>
+<p>Work Memory and candidates are <strong>keyed by the signed-in user’s Atlassian account id</strong>. The product UI is designed so each user sees <strong>their own</strong> items, not other users’ private Work Memory. Baton is <strong>not</strong> intended as a performance-review tool.</p>
+<hr>
+<h2>3. What data we collect from Atlassian products</h2>
+<p>Depending on features you use, Baton may read or write:</p>
+<table><thead><tr><th>Source</th><th>What</th><th>When</th></tr></thead><tbody>
+<tr><td><strong>Jira</strong></td><td>Issue comments (passive capture, if you opt in); issue metadata needed to create issues or notify; your account id; optionally your Atlassian account <strong>email</strong> (<code>read:email-address:jira</code>, app identity) for weekly-report addressing</td><td>Capture, Send to team board, weekly email, UI</td></tr>
+<tr><td><strong>Confluence</strong></td><td>Page/comment content (passive capture, if you opt in); space/page data to create a <strong>handover package</strong> page</td><td>Capture, handover</td></tr>
+<tr><td><strong>Rovo</strong></td><td>Text you send to the Baton agent; actions read/write <strong>only your</strong> Work Memory</td><td>Agent chat</td></tr>
+<tr><td><strong>User-entered</strong></td><td>Text from Remember this, manual add, Settings (including optional email / Slack id)</td><td>Always under your control</td></tr>
+</tbody></table>
+<p>Passive capture of Jira / Confluence content is <strong>off by default</strong>. You must accept the in-app privacy notice and turn capture on in Settings. Turning capture off can offer deletion of pending (unconfirmed) candidates. “Remember this” and Rovo remember still work when capture is off.</p>
+<p>Admins can exclude Jira projects, Confluence spaces, Slack channels, and keywords so matching content is skipped and not sent for classification.</p>
+<hr>
+<h2>4. External services (optional / feature-triggered)</h2>
+<p>Baton declares Forge backend egress to these hosts. Traffic happens only when the related feature runs and is configured.</p>
+<h3>Google Gemini (<code>generativelanguage.googleapis.com</code>)</h3>
+<ul>
+<li><strong>Purpose:</strong> Optional classification of keyword-matched text (type, summary, due date) and optional handover intro text.</li>
+<li><strong>What is sent:</strong> Only text that passed the keyword/date pre-filter (not every comment). Secret-like strings are <strong>masked</strong> first (e.g. password/token/api-key patterns, AWS/Google key shapes, Slack tokens, GitHub tokens, JWTs → <code>[MASKED]</code>).</li>
+<li><strong>Required?</strong> No. Without <code>GEMINI_API_KEY</code>, capture can still create “needs review” items; manual Remember this works. Baton uses Gemini’s <strong>free tier</strong> when configured; it does not use paid Forge LLMs.</li>
+</ul>
+<h3>Slack (<code>slack.com</code>) — optional</h3>
+<ul>
+<li><strong>Purpose:</strong> Optional channel message capture via a Forge web trigger (Events API).</li>
+<li><strong>Limits in product:</strong> Channels the bot is invited to only; <strong>never DMs</strong>; Baton <strong>never posts</strong> to Slack; signatures verified; retries de-duplicated.</li>
+<li>Each user may store their Slack member id in Settings for mapping.</li>
+</ul>
+<h3>Jira issue notify (Atlassian API — no separate email vendor)</h3>
+<ul>
+<li><strong>Purpose:</strong> Primary path for the weekly report email to the user’s <strong>Atlassian account email</strong>.</li>
+<li>Uses <code>POST /rest/api/3/issue/{key}/notify</code> as the <strong>app</strong> (<code>asApp</code>) to a viewable issue. Jira delivers (or drops) mail according to Atlassian/Jira notification settings. “Queued” is not a guarantee of inbox delivery.</li>
+</ul>
+<h3>Brevo (<code>api.brevo.com</code>) and Resend (<code>api.resend.com</code>) — optional</h3>
+<ul>
+<li><strong>Purpose:</strong> Send the weekly report HTML/plaintext <strong>only when</strong> the Settings recipient is a typed address that is <strong>not</strong> the Atlassian account email (or as fallback when notify has no recipients and a key is set).</li>
+<li>The message content is the same weekly report sections shown in the app. API keys are stored as encrypted Forge environment variables by the installer, not in Work Memory entities.</li>
+</ul>
+<hr>
+<h2>5. What we do <strong>not</strong> do</h2>
+<ul>
+<li>We do <strong>not sell</strong> your personal data or Work Memory.</li>
+<li>We do <strong>not</strong> use Baton data for advertising.</li>
+<li>We do <strong>not</strong> read Slack direct messages.</li>
+<li>We do <strong>not</strong> silently invent an email address; Settings shows the address that will be used, or asks you to enter one.</li>
+<li>We do <strong>not</strong> claim a weekly email was delivered solely because Jira returned a queue success.</li>
+</ul>
+<hr>
+<h2>6. Retention, deletion, and uninstall</h2>
+<ul>
+<li>Users can <strong>edit or delete</strong> individual candidates and Work Memory items in the UI, including bulk delete of pending candidates.</li>
+<li>Turning <strong>passive capture off</strong> can offer removal of pending items.</li>
+<li>Creating a Confluence handover page copies selected memory content into a <strong>Confluence page</strong> that then follows normal Confluence retention and permissions (outside Forge entity storage).</li>
+<li><strong>Uninstalling</strong> the Forge app from the site removes the app installation. Forge app storage for that installation is deleted according to <strong>Atlassian Forge / Atlassian Cloud retention for uninstalled apps</strong> (app-stored entity and KVS data for that installation is not kept available to the uninstalled app). Content already written into Jira issues or Confluence pages (for example a handover page or a “Send to team board” issue) remains in those products until site admins or users delete it there.</li>
+<li>Users who want data removed while the app is installed should delete items in Baton and, if needed, delete related Jira/Confluence pages they created.</li>
+</ul>
+<hr>
+<h2>7. Children’s data</h2>
+<p>Baton is a workplace productivity app for Atlassian Cloud teams. It is not directed at children.</p>
+<hr>
+<h2>8. Changes</h2>
+<p>We may update this policy when the product changes. The “Last updated” date at the top will change. Material changes for Marketplace or Sharing distribution will be reflected in the URL provided to admins.</p>
+<hr>
+<h2>9. Contact</h2>
+<p><strong>Team JAYTAI</strong>   Email: <strong>jayren1121@gmail.com</strong></p>
+<p>Questions about privacy, data deletion, or this policy: use the address above.</p>
+</body>
+</html>
